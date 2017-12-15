@@ -424,12 +424,12 @@ describe( 'effects', () => {
 				const promise = Promise.resolve( [
 					{
 						id: 'a9691cf9-ecaa-42bd-a9ca-49587e817647',
-						name: 'My cool block',
+						title: 'My cool block',
 						content: '<!-- wp:core/test-block {"name":"Big Bird"} /-->',
 					},
 				] );
 
-				set( global, 'wp.api.collections.ReusableBlocks', class {
+				set( global, 'wp.api.collections.Blocks', class {
 					fetch() {
 						return promise;
 					}
@@ -446,7 +446,7 @@ describe( 'effects', () => {
 						reusableBlocks: [
 							{
 								id: 'a9691cf9-ecaa-42bd-a9ca-49587e817647',
-								name: 'My cool block',
+								title: 'My cool block',
 								type: 'core/test-block',
 								attributes: {
 									name: 'Big Bird',
@@ -463,11 +463,11 @@ describe( 'effects', () => {
 				let modelAttributes;
 				const promise = Promise.resolve( {
 					id,
-					name: 'My cool block',
+					title: 'My cool block',
 					content: '<!-- wp:core/test-block {"name":"Big Bird"} /-->',
 				} );
 
-				set( global, 'wp.api.models.ReusableBlocks', class {
+				set( global, 'wp.api.models.Blocks', class {
 					constructor( attributes ) {
 						modelAttributes = attributes;
 					}
@@ -489,7 +489,7 @@ describe( 'effects', () => {
 						reusableBlocks: [
 							{
 								id: 'a9691cf9-ecaa-42bd-a9ca-49587e817647',
-								name: 'My cool block',
+								title: 'My cool block',
 								type: 'core/test-block',
 								attributes: {
 									name: 'Big Bird',
@@ -503,7 +503,7 @@ describe( 'effects', () => {
 			it( 'should handle an API error', () => {
 				const promise = Promise.reject( {} );
 
-				set( global, 'wp.api.collections.ReusableBlocks', class {
+				set( global, 'wp.api.collections.Blocks', class {
 					fetch() {
 						return promise;
 					}
@@ -533,7 +533,7 @@ describe( 'effects', () => {
 				let modelAttributes;
 				const promise = Promise.resolve( { id: 3 } );
 
-				set( global, 'wp.api.models.ReusableBlocks', class {
+				set( global, 'wp.api.models.Blocks', class {
 					constructor( attributes ) {
 						modelAttributes = attributes;
 					}
@@ -545,7 +545,7 @@ describe( 'effects', () => {
 
 				const reusableBlock = {
 					id: '69f00b2b-ea09-4d5c-a98f-0b1112d7d400',
-					name: 'My cool block',
+					title: 'My cool block',
 					type: 'core/test-block',
 					attributes: {
 						name: 'Big Bird',
@@ -563,7 +563,7 @@ describe( 'effects', () => {
 
 				expect( modelAttributes ).toEqual( {
 					id: '69f00b2b-ea09-4d5c-a98f-0b1112d7d400',
-					name: 'My cool block',
+					title: 'My cool block',
 					content: '<!-- wp:test-block {\"name\":\"Big Bird\"} /-->',
 				} );
 				return promise.then( () => {
@@ -578,7 +578,7 @@ describe( 'effects', () => {
 			it( 'should handle an API error', () => {
 				const promise = Promise.reject( {} );
 
-				set( global, 'wp.api.models.ReusableBlocks', class {
+				set( global, 'wp.api.models.Blocks', class {
 					save() {
 						return promise;
 					}
@@ -676,7 +676,7 @@ describe( 'effects', () => {
 					updateReusableBlock( 1, {
 						id: 1,
 						isTemporary: true,
-						name: 'Untitled block',
+						title: 'Untitled block',
 						type: staticBlock.name,
 						attributes: staticBlock.attributes,
 					} )

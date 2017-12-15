@@ -619,7 +619,7 @@ describe( 'block factory', () => {
 
 			expect( createReusableBlock( type, attributes ) ).toMatchObject( {
 				id: expect.any( Number ),
-				name: 'Untitled block',
+				title: 'Untitled block',
 				type,
 				attributes,
 			} );
