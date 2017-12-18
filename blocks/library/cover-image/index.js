@@ -21,6 +21,30 @@ import RangeControl from '../../inspector-controls/range-control';
 import BlockDescription from '../../block-description';
 
 const validAlignments = [ 'left', 'center', 'right', 'wide', 'full' ];
+const attributesDefinition = {
+	title: {
+		type: 'array',
+		source: 'children',
+		selector: 'h2',
+	},
+	url: {
+		type: 'string',
+	},
+	align: {
+		type: 'string',
+	},
+	id: {
+		type: 'number',
+	},
+	hasParallax: {
+		type: 'boolean',
+		default: false,
+	},
+	dimRatio: {
+		type: 'number',
+		default: 50,
+	},
+};
 
 registerBlockType( 'core/cover-image', {
 	title: __( 'Cover Image' ),
@@ -29,30 +53,7 @@ registerBlockType( 'core/cover-image', {
 
 	category: 'common',
 
-	attributes: {
-		title: {
-			type: 'array',
-			source: 'children',
-			selector: 'h2',
-		},
-		url: {
-			type: 'string',
-		},
-		align: {
-			type: 'string',
-		},
-		id: {
-			type: 'number',
-		},
-		hasParallax: {
-			type: 'boolean',
-			default: false,
-		},
-		dimRatio: {
-			type: 'number',
-			default: 50,
-		},
-	},
+	attributes: attributesDefinition,
 
 	getEditWrapperProps( attributes ) {
 		const { align } = attributes;
@@ -166,7 +167,7 @@ registerBlockType( 'core/cover-image', {
 	},
 
 	save( { attributes, className } ) {
-		const { url, title, hasParallax, dimRatio } = attributes;
+		const { url, title, hasParallax, dimRatio, align } = attributes;
 		const style = url ?
 			{ backgroundImage: `url(${ url })` } :
 			undefined;
@@ -176,7 +177,8 @@ registerBlockType( 'core/cover-image', {
 			{
 				'has-background-dim': dimRatio !== 0,
 				'has-parallax': hasParallax,
-			}
+			},
+			align ? `align${ align }` : null,
 		);
 
 		return (
@@ -185,6 +187,31 @@ registerBlockType( 'core/cover-image', {
 			</section>
 		);
 	},
+
+	deprecated: [ {
+		attributes: attributesDefinition,
+
+		save( { attributes, className } ) {
+			const { url, title, hasParallax, dimRatio } = attributes;
+			const style = url ?
+				{ backgroundImage: `url(${ url })` } :
+				undefined;
+			const classes = classnames(
+				className,
+				dimRatioToClass( dimRatio ),
+				{
+					'has-background-dim': dimRatio !== 0,
+					'has-parallax': hasParallax,
+				},
+			);
+
+			return (
+				<section className={ classes } style={ style }>
+					<h2>{ title }</h2>
+				</section>
+			);
+		},
+	} ],
 } );
 
 function dimRatioToClass( ratio ) {
