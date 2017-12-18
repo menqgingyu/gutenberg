@@ -37,6 +37,14 @@ import {
 } from '../../selectors';
 import { startMultiSelect, stopMultiSelect, multiSelect, selectBlock } from '../../actions';
 
+function isInputField( { nodeName, contentEditable } ) {
+	return (
+		nodeName === 'input' ||
+		nodeName === 'textarea' ||
+		contentEditable === 'true'
+	);
+}
+
 class BlockList extends Component {
 	constructor( props ) {
 		super( props );
@@ -108,15 +116,23 @@ class BlockList extends Component {
 	}
 
 	onCopy( event ) {
-		const { multiSelectedBlocks } = this.props;
+		const { multiSelectedBlocks, selectedBlock } = this.props;
 
-		if ( multiSelectedBlocks.length ) {
-			const serialized = serialize( multiSelectedBlocks );
-
-			event.clipboardData.setData( 'text/plain', serialized );
-			event.clipboardData.setData( 'text/html', serialized );
-			event.preventDefault();
+		if ( ! multiSelectedBlocks.length && ! selectedBlock ) {
+			return;
 		}
+
+		// Let native copy behaviour take over in input fields.
+		if ( selectedBlock && isInputField( document.activeElement ) ) {
+			return;
+		}
+
+		const serialized = serialize( selectedBlock || multiSelectedBlocks );
+
+		event.clipboardData.setData( 'text/plain', serialized );
+		event.clipboardData.setData( 'text/html', serialized );
+
+		event.preventDefault();
 	}
 
 	onCut( event ) {
