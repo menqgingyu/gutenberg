@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { createStore, combineReducers } from 'redux';
-import { flowRight } from 'lodash';
+import { flowRight, get } from 'lodash';
 
 /**
  * Module constants
@@ -17,18 +17,31 @@ const initialReducer = () => ( {} );
 const store = createStore( initialReducer, {}, flowRight( enhancers ) );
 
 /**
- * Registers a new sub reducer to the global state
+ * Registers a new sub reducer to the global state and returns a Redux-like store object.
  *
- * @param {String} key     Reducer key
- * @param {Object} reducer Reducer function
+ * @param {String}  key     Reducer key
+ * @param {Object}  reducer Reducer function
+ *
+ * @return {Object}         Store Object
  */
 export function registerReducer( key, reducer ) {
 	reducers[ key ] = reducer;
 	store.replaceReducer( combineReducers( reducers ) );
+
+	return {
+		dispatch: store.dispatch,
+		getState: () => get( store.getState(), key ),
+		subscribe( listener ) {
+			let previousState = get( store.getState(), key );
+			const unsubscribe = store.subscribe( () => {
+				const newState = get( store.getState(), key );
+				if ( newState !== previousState ) {
+					listener();
+					previousState = newState;
+				}
+			} );
+
+			return unsubscribe;
+		},
+	};
 }
-
-export const subscribe = store.subscribe;
-
-export const dispatch = store.dispatch;
-
-export const getState = store.getState;
